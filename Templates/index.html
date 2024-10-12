@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Breast Cancer Prediction Model</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <style>
+      body {
+        background: linear-gradient(135deg, #eaf4f4 30%, #d1e7dd 100%);
+        color: #333;
+        font-family: 'Arial', sans-serif;
+      }
+      .header {
+        background: #007BFF;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+      }
+      .container {
+        margin-top: 20px;
+      }
+      .form-control {
+        border-radius: 5px;
+      }
+      .btn-primary {
+        background-color: #0056b3;
+        border-color: #0056b3;
+      }
+      .btn-primary:hover {
+        background-color: #004494;
+        border-color: #004494;
+      }
+      .card {
+        border-radius: 10px;
+      }
+      .card-title {
+        color: #333;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+        color: #555;
+      }
+      .example-data {
+        background: #f8f9fa;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+      .image-fluid {
+        border-radius: 10px;
+        width: 100%; /* Full width */
+        max-height: 300px; /* Reduce height */
+        object-fit: cover; /* Maintain aspect ratio */
+      }
+      /* New styles for messages */
+      .message-container {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 5px;
+      }
+      .cancerous-message {
+        background-color: #f8d7da; /* Light red */
+        color: #721c24; /* Dark red */
+        border: 1px solid #f5c6cb; /* Red border */
+      }
+      .not-cancerous-message {
+        background-color: #d4edda; /* Light green */
+        color: #155724; /* Dark green */
+        border: 1px solid #c3e6cb; /* Green border */
+      }
+      /* Styling for magic effect */
+      h1 {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      }
+      .magical {
+        animation: glitter 1.5s infinite alternate;
+      }
+      @keyframes glitter {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.6;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="container">
+      <div class="header">
+        <h1 class="magical">Breast Cancer Prediction Model</h1>
+      </div>
+      <div class="d-flex justify-content-center" style="margin-top: 15px;">
+        <img src="https://www.scnsoft.com/blog-pictures/healthcare/cancer-and-artificial-intelligence.png" alt="Breast Cancer Awareness" class="img-fluid rounded">
+      </div>
+
+      <form action="/predict" method="POST" class="mt-4">
+        <div class="mb-3">
+          <label for="feature" class="form-label">Input Breast Cancer Features (comma-separated)</label>
+          <input type="text" class="form-control" id="feature" name="feature" placeholder="e.g., -0.23250538, 0.82511699, -0.66315284, ..." required>
+        </div>
+        <button type="submit" class="btn btn-primary">Predict</button>
+      </form>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <div class="example-data">
+            <h5>Example Data for Cancerous Cases:</h5>
+            <pre>-0.23250538, 0.82511699, -0.66315284, 0.96181678, 0.68936555,
+1.63561451, 2.39991193, 1.6966724, 2.38986091, 4.55838605,
+1.57967131, 2.17560637, -0.44389265, 2.04714969, 1.41945307,
+0.30152063, 0.69125126, 0.15943153, 1.89652406, 0.31709006,
+1.35315121, 1.22293769, -0.68774672, 1.33901374, 0.99404377,
+0.98161345, 0.96612202, 0.57891167, 2.1711821, 1.86210823,
+1.26680023</pre>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="example-data">
+            <h5>Example Data for Non-Cancerous Cases:</h5>
+            <pre>-0.23209947, -0.37326674, 0.50881308, -0.39469992, -0.40450894,
+-1.48795851, -0.39664967, -0.35152929, -0.78962337, -0.82928438,
+-0.2099722, 0.31445072, 1.12080001, -0.15775936, 0.0062847,
+-0.33803087, 1.06543408, 0.63164606, 0.22611671, 0.7617107,
+1.45984793, -0.39223216, 0.24138427, -0.4734849, -0.4140696,
+-1.63204193, -0.37119862, -0.43265445, -0.89667412, -0.63236707,
+-0.11469617</pre>
+          </div>
+        </div>
+      </div>
+
+      {% if message %}
+        <div class="message-container {% if message[0] == 'Not Cancerous' %}not-cancerous-message{% else %}cancerous-message{% endif %}">
+          <p class="h5">{{ message[0] }}</p>
+          {% if message[0] == 'Not Cancerous' %}
+            <div class="card my-3">
+              <img src="https://img0.etsystatic.com/009/0/5755677/il_fullxfull.468422864_8rwt.jpg" class="card-img-top image-fluid" alt="Not Cancerous">
+              <div class="card-body">
+                <h5 class="card-title">Not Cancerous</h5>
+                <p class="card-text">Don't worry! You don't have breast cancer. Enjoy your life!</p>
+              </div>
+            </div>
+          {% else %}
+            <div class="card my-3">
+              <img src="https://thumbs.dreamstime.com/b/ask-consult-your-doctor-young-ill-illness-healthy-health-check-u-up-screening-sign-79745862.jpg" class="card-img-top image-fluid" alt="Cancerous">
+              <div class="card-body">
+                <h5 class="card-title">Cancerous</h5>
+                <p class="card-text">Alert! You have been diagnosed with breast cancer. Please consult a doctor.</p>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="footer">
+      <p>&copy; 2024 Breast Cancer Prediction Model. By Rishi Patel.</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+  </body>
+</html>
